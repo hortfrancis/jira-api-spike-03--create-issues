@@ -1,0 +1,58 @@
+meta {
+  name: Create Pre-written Issue
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/issues/prewritten
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "New Endpoint Implementation",
+    "issueType": "Task",
+    "priority": "High",
+    "labels": ["prewritten", "api-test", "checklist"]
+  }
+}
+
+docs {
+  # Create Pre-written Issue
+  
+  Creates a Jira issue using a pre-written checklist from the file system.
+  
+  The checklist is automatically loaded from `jira/issue-context/make-new-endpoint.checklist.md`
+  and converted to Jira's ADF taskList format.
+  
+  ## Pre-written Checklist Content
+  
+  The file contains a standard checklist for implementing new endpoints:
+  - Make a new feature branch
+  - Implement the new endpoint
+    - Write unit tests
+  - Update documentation
+    - Readme
+    - LLD
+  - Make a PR to main
+  
+  ## Request Body
+  
+  Only the `summary` is required. The checklist description is automatically loaded.
+  
+  Optional fields:
+  - `issueType`: Defaults to "Task"
+  - `priority`: e.g., "High", "Medium", "Low"
+  - `labels`: Array of labels
+  - `assignee`: Assignee account ID
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}

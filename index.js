@@ -1,9 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { createJiraIssue } from './utils/createJiraIssue.js';
 import { updateJiraIssue } from './utils/updateJiraIssue.js';
 import { createJiraIssueWithChecklist } from './utils/createJiraIssueWithChecklist.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 dotenv.config();
 
@@ -70,6 +76,36 @@ app.post('/api/issues/checklist', async (req, res) => {
     });
   } catch (error) {
     console.error('✗ Error creating Jira issue with checklist:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// POST endpoint to create a pre-written issue from file
+app.post('/api/issues/prewritten', async (req, res) => {
+  try {
+    const { summary, ...options } = req.body;
+    
+    // Read the pre-written checklist from file
+    const checklistPath = join(__dirname, 'jira/issue-context/make-new-endpoint.checklist.md');
+    const checklist = readFileSync(checklistPath, 'utf-8');
+    
+    console.log('Creating Jira issue with pre-written checklist:', summary);
+    
+    const result = await createJiraIssueWithChecklist(summary, checklist, options);
+    
+    console.log('✓ Pre-written issue created successfully:', result.key);
+    console.log('  URL:', result.self);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Pre-written issue created successfully',
+      issue: result
+    });
+  } catch (error) {
+    console.error('✗ Error creating pre-written issue:', error.message);
     res.status(500).json({
       success: false,
       error: error.message
