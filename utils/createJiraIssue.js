@@ -1,7 +1,9 @@
+import { markdownToADF } from './markdownToADF.js';
+
 /**
  * Creates a new Jira issue
  * @param {string} summary - The display name/title of the issue
- * @param {string} description - The description field
+ * @param {string} description - The description field (supports Markdown)
  * @param {Object} [options={}] - Additional options
  * @param {string} [options.projectKey] - The project key (e.g., 'PROJ'). Defaults to JIRA_PROJECT_KEY env var
  * @param {string} [options.issueType='Task'] - The issue type (e.g., 'Task', 'Bug', 'Story')
@@ -32,6 +34,19 @@ export async function createJiraIssue(summary, description, options = {}) {
 
   const issueType = options.issueType || 'Task';
 
+  // Convert Markdown description to ADF
+  let descriptionADF;
+  if (description) {
+    descriptionADF = markdownToADF(description);
+  } else {
+    // Empty ADF document
+    descriptionADF = {
+      type: 'doc',
+      version: 1,
+      content: []
+    };
+  }
+
   // Prepare the issue payload
   const payload = {
     fields: {
@@ -39,21 +54,7 @@ export async function createJiraIssue(summary, description, options = {}) {
         key: projectKey
       },
       summary: summary,
-      description: {
-        type: 'doc',
-        version: 1,
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: description || ''
-              }
-            ]
-          }
-        ]
-      },
+      description: descriptionADF,
       issuetype: {
         name: issueType
       }
@@ -78,6 +79,9 @@ export async function createJiraIssue(summary, description, options = {}) {
   }
 
   // Make the API call to Jira
+  console.log(`→ Sending request to Jira API: POST ${jiraUrl}/rest/api/3/issue`);
+  console.log('  Project:', projectKey, '| Type:', issueType, '| Summary:', summary.substring(0, 50) + (summary.length > 50 ? '...' : ''));
+  
   const response = await fetch(`${jiraUrl}/rest/api/3/issue`, {
     method: 'POST',
     headers: {
@@ -90,9 +94,11 @@ export async function createJiraIssue(summary, description, options = {}) {
 
   if (!response.ok) {
     const errorText = await response.text();
+    console.error(`✗ Jira API request failed with status ${response.status}`);
     throw new Error(`Jira API error (${response.status}): ${errorText}`);
   }
 
   const result = await response.json();
+  console.log(`✓ Jira API request successful (${response.status})`);
   return result;
 }

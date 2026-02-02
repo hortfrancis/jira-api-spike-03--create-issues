@@ -1,0 +1,46 @@
+meta {
+  name: Create Issue - Markdown
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Test issue with Markdown description",
+    "description": "## Overview\n\nThis issue was created with a **Markdown** description that will be converted to ADF.\n\n### Key Points\n\n- First important point\n- Second important point\n- Third point with *emphasis*\n\n### Code Example\n\n```javascript\nconst example = 'This is a code block';\nconsole.log(example);\n```\n\n---\n\n**Note:** The API should convert this Markdown to Atlassian Document Format automatically.",
+    "issueType": "Task",
+    "priority": "Medium",
+    "labels": ["markdown-test", "api-test"]
+  }
+}
+
+docs {
+  # Create Issue with Markdown Description
+  
+  This request tests creating a Jira issue with a Markdown-formatted description.
+  
+  The API endpoint should automatically convert the Markdown to Atlassian Document Format (ADF)
+  before sending it to Jira.
+  
+  ## Markdown Features Tested
+  
+  - Headings (h2, h3)
+  - Bold and italic text
+  - Unordered lists
+  - Code blocks
+  - Horizontal rules
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}
