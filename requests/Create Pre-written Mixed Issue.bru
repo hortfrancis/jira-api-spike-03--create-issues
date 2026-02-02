@@ -1,0 +1,66 @@
+meta {
+  name: Create Pre-written Mixed Issue
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/issues/prewritten-mixed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Project Implementation - Mixed Content Test",
+    "issueType": "Task",
+    "priority": "High",
+    "labels": ["prewritten", "mixed-content", "api-test"]
+  }
+}
+
+docs {
+  # Create Pre-written Mixed Issue
+  
+  Creates a Jira issue with pre-written mixed content combining:
+  - Standard Markdown (headings, paragraphs, bullet lists)
+  - GFM checklists (interactive task items)
+  
+  The content is assembled from multiple sections and properly converted to ADF.
+  
+  ## Content Sections
+  
+  The pre-written content includes:
+  
+  1. **Heading**: "Project Implementation Plan"
+  2. **Intro Paragraph**: Overview of the implementation plan
+  3. **Bullet Points**: Key requirements section with standard bullet list
+  4. **Checklist 1**: Development setup checklist with nested items
+  5. **Subheading**: "Implementation Steps"
+  6. **Checklist 2**: Implementation tasks with nested checklists
+  7. **Conclusion**: Note about completion requirements
+  
+  ## Conversion Strategy
+  
+  - Standard markdown sections are converted using Atlassian's `markdownToADF`
+  - GFM checklists are converted using custom `gfmChecklistToADF` 
+  - The two are merged to create a single ADF document with proper task items
+  
+  ## Request Body
+  
+  Only the `summary` is required. All content is pre-defined.
+  
+  Optional fields:
+  - `issueType`: Defaults to "Task"
+  - `priority`: e.g., "High", "Medium", "Low"
+  - `labels`: Array of labels
+  - `assignee`: Assignee account ID
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}

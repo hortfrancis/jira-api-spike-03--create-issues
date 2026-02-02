@@ -7,6 +7,7 @@ import { dirname, join } from 'path';
 import { createJiraIssue } from './utils/createJiraIssue.js';
 import { updateJiraIssue } from './utils/updateJiraIssue.js';
 import { createJiraIssueWithChecklist } from './utils/createJiraIssueWithChecklist.js';
+import { createJiraIssueWithMixedContent } from './utils/createJiraIssueWithMixedContent.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -106,6 +107,61 @@ app.post('/api/issues/prewritten', async (req, res) => {
     });
   } catch (error) {
     console.error('✗ Error creating pre-written issue:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// POST endpoint to create a pre-written issue with mixed markdown and checklists
+app.post('/api/issues/prewritten-mixed', async (req, res) => {
+  try {
+    const { summary, ...options } = req.body;
+    
+    // Define the mixed content sections
+    const content = {
+      heading: '# Project Implementation Plan',
+      introParagraph: 'This document outlines the complete implementation plan for the new feature. Please review all sections carefully before beginning work.',
+      bulletPoints: `## Key Requirements
+
+- Must be backwards compatible
+- Should follow existing code patterns
+- Must include comprehensive tests
+- Documentation is required`,
+      checklist1: `- [ ] Set up development environment
+- [ ] Create feature branch
+- [ ] Review existing codebase
+  - [ ] Identify integration points
+  - [ ] Document dependencies`,
+      subheading: '## Implementation Steps',
+      checklist2: `- [ ] Write unit tests
+  - [ ] Test happy path
+  - [ ] Test error cases
+- [ ] Implement core functionality
+- [ ] Update documentation
+  - [ ] API documentation
+  - [ ] User guide
+  - [ ] Changelog
+- [ ] Code review
+- [ ] Merge to main`,
+      conclusionParagraph: '**Note:** All checklist items must be completed before submitting for final review.'
+    };
+    
+    console.log('Creating Jira issue with pre-written mixed content:', summary);
+    
+    const result = await createJiraIssueWithMixedContent(summary, content, options);
+    
+    console.log('✓ Pre-written mixed issue created successfully:', result.key);
+    console.log('  URL:', result.self);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Pre-written mixed issue created successfully',
+      issue: result
+    });
+  } catch (error) {
+    console.error('✗ Error creating pre-written mixed issue:', error.message);
     res.status(500).json({
       success: false,
       error: error.message
