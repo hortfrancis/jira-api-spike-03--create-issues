@@ -1,0 +1,45 @@
+meta {
+  name: Update Issue
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/issues/PROJ-123
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Updated issue summary",
+    "description": "## Updated Description\n\nThis issue has been updated with new **Markdown** content.\n\n- Updated point 1\n- Updated point 2",
+    "priority": "High",
+    "labels": ["updated", "api-test"]
+  }
+}
+
+docs {
+  # Update Jira Issue
+  
+  Updates an existing Jira issue through the API endpoint.
+  
+  Replace `PROJ-123` in the URL with your actual issue key.
+  
+  ## Request Body
+  
+  All fields are optional - include only the fields you want to update:
+  
+  - `summary`: Update the issue title/display name
+  - `description`: Update the description (supports Markdown)
+  - `priority`: Update priority (e.g., "High", "Medium", "Low")
+  - `labels`: Update labels (replaces existing labels)
+  - `assignee`: Update assignee account ID
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+}

@@ -13,8 +13,15 @@ This description came from **Markdown**.
 - Second item
 `;
 
+const md2 = `
+- [] checkbox unchecked
+- [x] checkbox checked
+
+> Blockquote example
+`;
+
 const mdTransformer = new MarkdownTransformer(defaultSchema);
-const pmDoc = mdTransformer.parse(md);      // Markdown → ProseMirror
+const pmDoc = mdTransformer.parse(md2);      // Markdown → ProseMirror
 const jsonTransformer = new JSONTransformer();
 const adfDoc = jsonTransformer.encode(pmDoc); // ProseMirror → ADF JSON
 

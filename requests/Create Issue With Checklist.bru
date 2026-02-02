@@ -1,0 +1,37 @@
+meta {
+  name: Create Issue with Checklist
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Task with nested checklist",
+    "description": "Example description with a nested bullet list:\n\n- Top-level item 1\n- Top-level item 2 (has nested items)\n  - Nested item 2.1\n  - Nested item 2.2\n- Top-level item 3",
+    "issueType": "Task",
+    "priority": "Medium",
+    "labels": ["checklist-test", "api-test"]
+  }
+}
+
+docs {
+  # Create Issue with Checklist
+  
+  Example of creating an issue with a nested bullet list (checklist) in the description.
+  
+  The API endpoint will automatically convert the Markdown-formatted list to Atlassian Document Format (ADF).
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}

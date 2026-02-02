@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { createJiraIssue } from './utils/createJiraIssue.js';
+import { updateJiraIssue } from './utils/updateJiraIssue.js';
+import { createJiraIssueWithChecklist } from './utils/createJiraIssueWithChecklist.js';
 
 dotenv.config();
 
@@ -15,7 +17,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
   console.log(`\n[${timestamp}] ${req.method} ${req.path}`);
-  if (Object.keys(req.body).length > 0) {
+  if (req.body && Object.keys(req.body).length > 0) {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
   }
   next();
@@ -43,6 +45,56 @@ app.post('/api/issues', async (req, res) => {
     });
   } catch (error) {
     console.error('✗ Error creating Jira issue:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// POST endpoint to create a Jira issue with GFM checklist
+app.post('/api/issues/checklist', async (req, res) => {
+  try {
+    const { summary, checklist, ...options } = req.body;
+    console.log('Creating Jira issue with GFM checklist:', summary);
+    
+    const result = await createJiraIssueWithChecklist(summary, checklist, options);
+    
+    console.log('✓ Issue with checklist created successfully:', result.key);
+    console.log('  URL:', result.self);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Issue with checklist created successfully',
+      issue: result
+    });
+  } catch (error) {
+    console.error('✗ Error creating Jira issue with checklist:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// PUT endpoint to update an existing Jira issue
+app.put('/api/issues/:issueKey', async (req, res) => {
+  try {
+    const { issueKey } = req.params;
+    console.log('Updating Jira issue:', issueKey);
+    
+    const result = await updateJiraIssue(issueKey, req.body);
+    
+    console.log('✓ Issue updated successfully:', issueKey);
+    console.log('  Updated fields:', result.updatedFields.join(', '));
+    
+    res.status(200).json({
+      success: true,
+      message: 'Issue updated successfully',
+      result: result
+    });
+  } catch (error) {
+    console.error('✗ Error updating Jira issue:', error.message);
     res.status(500).json({
       success: false,
       error: error.message

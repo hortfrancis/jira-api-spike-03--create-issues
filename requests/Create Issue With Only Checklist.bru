@@ -1,0 +1,55 @@
+meta {
+  name: Create Issue With Only Checklist
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/issues/checklist
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Task with GFM checklist",
+    "checklist": "- [ ] Checklist item 1\n- [ ] Checklist item 2\n  - [ ] Nested checklist item level 1\n    - [ ] Nested checklist item level 2\n  - [x] Another nested (checked)\n- [] Supports - [] too",
+    "issueType": "Task",
+    "priority": "Medium",
+    "labels": ["gfm-checklist-test", "api-test"]
+  }
+}
+
+docs {
+  # Create Issue With Only Checklist
+  
+  Creates a Jira issue with a GFM (GitHub Flavored Markdown) checklist as the description.
+  
+  The checklist is converted to Jira's ADF taskList format using a custom converter.
+  
+  ## GFM Checklist Format
+  
+  - `- [ ]` creates unchecked task items
+  - `- [x]` creates checked task items
+  - `- []` also works for unchecked items
+  - Indentation (2 spaces per level) creates nested task lists
+  
+  ## Example Checklist
+  
+  ```
+  - [ ] Checklist item 1
+  - [ ] Checklist item 2
+    - [ ] Nested checklist item level 1
+      - [ ] Nested checklist item level 2
+    - [x] Another nested (checked)
+  - [] Supports - [] too
+  ```
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}
