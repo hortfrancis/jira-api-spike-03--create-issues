@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "jira-api-spike-03--create-issues",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

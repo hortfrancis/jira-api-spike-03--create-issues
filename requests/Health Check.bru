@@ -1,0 +1,17 @@
+meta {
+  name: Health Check
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/
+  body: none
+  auth: none
+}
+
+docs {
+  # Health Check
+  
+  Simple GET request to verify the server is running.
+}

@@ -1,0 +1,45 @@
+meta {
+  name: Create Issue
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Test issue from Bruno",
+    "description": "This is a test issue created via the API endpoint",
+    "issueType": "Task",
+    "priority": "Medium",
+    "labels": ["api-test", "bruno"]
+  }
+}
+
+docs {
+  # Create Jira Issue
+  
+  Creates a new Jira issue through the API endpoint.
+  
+  ## Request Body
+  
+  - `summary` (required): The issue title/display name
+  - `description` (optional): The issue description
+  - `issueType` (optional): Defaults to "Task"
+  - `priority` (optional): e.g., "High", "Medium", "Low"
+  - `projectKey` (optional): Falls back to JIRA_PROJECT_KEY env var
+  - `labels` (optional): Array of labels
+  - `assignee` (optional): Assignee account ID
+  
+  ## Environment Variables Needed
+  
+  Make sure your `.env` file has:
+  - JIRA_URL
+  - JIRA_EMAIL
+  - JIRA_API_TOKEN
+  - JIRA_PROJECT_KEY
+}

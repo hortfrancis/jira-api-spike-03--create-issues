@@ -1,0 +1,27 @@
+meta {
+  name: Create Bug
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/issues
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "summary": "Login button not working",
+    "description": "Users are unable to click the login button on the main page. The button appears to be unresponsive.",
+    "issueType": "Bug",
+    "priority": "High",
+    "labels": ["ui", "critical", "login"]
+  }
+}
+
+docs {
+  # Create Bug
+  
+  Example of creating a Bug type issue with high priority.
+}
